@@ -1,0 +1,156 @@
+/* main */
+* {
+    box-sizing: border-box;
+}
+    
+html, body {
+    margin: 0;
+    background-image: url(https://images.pexels.com/photos/844297/pexels-photo-844297.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: "Quicksand", sans-serif;
+}
+
+/* navbar */
+#icon {
+    padding-left: 10px;
+}
+
+#searchButton {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    color: white;
+}
+
+.fa-magnifying-glass {
+    margin-left: 1230px;
+    margin-right: 10px;
+}
+
+.fa-calendar-plus {
+    margin-right: 10px;
+}
+
+.rounded-circle {
+    margin-right: 20px;
+}
+
+#links {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+}
+
+/* events */
+h2 {
+  padding-left: 650px;
+  padding-right: 600px;
+  padding-top: 50px;
+  font-size: 100px;
+  font-family: "Mea Culpa", cursive;
+  font-weight: 400;
+  font-style: normal;
+  color: #000000;
+}
+
+/* events in gallery format */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.desc {
+  font-family: "Quicksand", sans-serif;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: calc(33.33% - 20px);
+  box-sizing: border-box;
+  padding-left: 70px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.desc img {
+  border-radius: 10px;
+  height: 300px;
+  width: 350px;
+  display: block;
+}
+
+.desc img:hover {
+  cursor: pointer;
+  color: #ffffff;
+  box-shadow: 0 0 15px #CF9FDB;
+  text-shadow: 0 0 15px #CF9FDB;
+  background-color: #611c8c;
+}
+
+@media screen and (max-width: 768px) {
+  .desc {
+      flex: 1 1 calc(50% - 20px);
+      max-width: calc(50% - 20px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .desc {
+      flex: 1 1 100%;
+      max-width: 100%;
+  }
+}
+
+/* Modal (background) */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  padding-top: 100px; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%; 
+  overflow: auto; 
+  /* background-color: #3c00ff; */
+  background-color: #82678dc8;
+}
+
+/* Modal Content (image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 550px;
+  max-height: 500px;
+}
+
+/* Caption of Modal Image */
+#caption {
+  margin: auto;
+  display: block;
+  max-width: 550px;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  color: #ccc;
+  padding: 10px 0;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+

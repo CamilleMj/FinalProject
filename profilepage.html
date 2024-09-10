@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="profile.css">
+    <title>Profile Page</title>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet"/>
+</head>
+<body>
+    <div class="profile-page">
+        <div class="content">
+            <div title="Back to homepage" class="homepagebackbutton">
+                <a href="/homepage.html" class="back-button"><i class="fa-solid fa-arrow-left"></i></a>
+            </div>
+            <div title="Modify event" class="modifybackbutton">
+                <a href="/user_event.html" class="modify-button" target="_blank"><i class="fa-solid fa-pen"></i></a>
+            </div>
+            <div class="upload">
+                <img id="profile-picture" src="/public/OIP.jpg" width=200 height=200 alt="profile picture">
+                <div class="round">
+                    <input type="file" id="profile-upload">
+                    <i class=" fa fa-camera" style=" color: #fff;"></i>
+                </div>
+            </div>
+            <h1 id="username">Username</h1>
+        </div>
+    </div>
+    <script src="profile.js"></script>
+</body>
+</html>

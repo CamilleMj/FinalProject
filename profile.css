@@ -1,0 +1,218 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background-image: url(https://images.pexels.com/photos/844297/pexels-photo-844297.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: "Quicksand", sans-serif;
+    color: #ffffff;
+}
+
+.profile-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px #CF9FDB;
+    background-color: #611c8cb8;
+    position: relative;
+}
+
+@media (max-width: 990px) {
+    .profile-page .content {
+      max-width: 420px;
+      padding: 0;
+      border-radius: 3;
+    }
+}
+
+/* back to homepage button*/
+.homepagebackbutton {
+    margin: 0;
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    /* display: flex;
+    float: left;
+    position: absolute;
+    margin-right: 200px; */
+    font-size: 30px;
+}
+
+.back-button i, .modify-button i {
+    color: #CF9FDB;
+}
+
+.back-button:hover i, .modify-button:hover i {
+    color: #ffffff;
+}
+
+/* modifiy event button */
+.modifybackbutton {
+    margin: 0;
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-size: 23px;
+}
+
+/* Profile image*/
+.upload {
+    width: 200px;
+    position: relative;
+    margin: auto;
+}
+
+.upload img {
+    border-radius: 50%;
+    border: 6px solid #ffffff;
+}
+
+.upload .round {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #c171f3b8;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.upload .round input[type=file] {
+    position: absolute;
+    transform: scale(2);
+    opacity: 0;
+}
+
+input[type=file]::-webkit-file-upload-button {
+    cursor: pointer;
+}
+
+/*Username*/
+h1 {
+    padding-top: 30px;
+    text-align: center;
+    font-family: "Quicksand", sans-serif;
+    color: #ffffff;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.desc {
+  font-family: "Quicksand", sans-serif;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: calc(33.33% - 20px);
+  box-sizing: border-box;
+  padding-left: 70px;
+  margin-top: 150px;
+  margin-bottom: 10px;
+}
+
+.desc img {
+  border-radius: 10px;
+  height: 300px;
+  width: 350px;
+  display: block;
+}
+
+.desc img:hover {
+  cursor: pointer;
+  color: #ffffff;
+  box-shadow: 0 0 15px #CF9FDB;
+  text-shadow: 0 0 15px #CF9FDB;
+  background-color: #611c8c;
+}
+
+@media screen and (max-width: 768px) {
+  .desc {
+      flex: 1 1 calc(50% - 20px);
+      max-width: calc(50% - 20px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .desc {
+      flex: 1 1 100%;
+      max-width: 100%;
+  }
+}
+
+/* Modal (background) */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  padding-top: 100px; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%; 
+  overflow: auto; 
+  /* background-color: #3c00ff; */
+  background-color: #82678dc8;
+}
+
+/* Modal Content (image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 550px;
+  max-height: 500px;
+}
+
+/* Caption of Modal Image */
+#caption {
+  margin: auto;
+  display: block;
+  max-width: 550px;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  color: #ccc;
+  padding: 10px 0;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}

@@ -1,0 +1,135 @@
+body {
+    background-image: url(https://images.pexels.com/photos/844297/pexels-photo-844297.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: "Quicksand", sans-serif;
+}
+
+/*FIRST PAGE*/
+.Start {
+    text-align: center;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+h1 {
+    font-size: 100px;
+    font-family: "Mea Culpa", cursive;
+    font-weight: 400;
+    font-style: normal;
+    color: #000000;
+
+}
+
+h2 {
+    font-size: 80px;
+    font-family: "Mea Culpa", cursive;
+    font-weight: 400;
+    font-style: normal;
+    color: #000000;
+}
+
+a, input[type=submit] {
+    border-radius: 20px;
+    border: none;
+    padding: 15px 50px;
+    font-size: 15px;
+    background: #CF9FDB;
+    color: #ffffff;
+    text-decoration: none;
+    transition: .5s;
+    margin: 15px;
+}
+
+a::before, input[type=submit]::before {
+    border-radius: 20px;
+    border-radius: 50%;
+    transition: .5s;
+    transform: scale(.9);
+    z-index: -1;
+}
+
+a:hover, input[type=submit]:hover {
+    color: #ffffff;
+    box-shadow: 0 0 5px #CF9FDB;
+    text-shadow: 0 0 5px #CF9FDB;
+    background-color: #611c8c;
+}
+/*FIRST PAGE*/
+
+/*REGISTER PAGE/LOGIN*/
+.form {
+    display: flex;
+    justify-content: center;
+    padding: 50px;
+    margin: 90px;
+    font-size: 20px;
+}
+
+.form_email, .form_name, .form_username, .form_password, .form_date, .form_location, .form_textarea, .form_category, .form_upload {
+    padding: 20px;
+    margin: 10px;
+}
+
+.form_name, .form_date {
+    display: flex;
+}
+
+#fname, #lname, #email, #user, #pwd, #date, #appt, #locality {
+    margin: 5px;
+}
+
+input[type=email], input[type=password], input[type=text], input[type=date], input[type=time], input[list=category], #area {
+    background-color: transparent;
+    border-style: solid;
+    border-color:rgba(0, 0, 0, 0.432);
+    border-radius: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+input[type=email], input[type=password], #user {
+    padding-right: 190px;
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+}
+
+input[type=submit] {
+    cursor: pointer;
+}
+
+/*CREATE/SEARCH EVENT PAGE*/
+#date, #appt {
+    margin-right: 40px;
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+#locality {
+    padding-right: 190px;
+}
+
+input[list=category] {
+    padding-right: 108px;
+}
+
+#date1, #locality1, #category {
+    margin-right: 40px;
+    padding-right: 100px;
+}
+
+#date1 {
+    padding-right: 160px;
+}
+
+/*SEARCH PAGE*/
+
+.results {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    color: #611c8c;
+}
