@@ -20,12 +20,19 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   }
 });
-
+console.log('Uploaded File:', req.file);
 const upload = multer({ storage: storage });
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+
+const uploadDir = path.join(__dirname, 'public/uploads');
+
+// Ensure upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Serve static files
 app.use(express.static(__dirname));
@@ -196,11 +203,10 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
   const { user, date, appt, location, message, category } = req.body;
   const filePath = req.file ? req.file.path : null;
 
-  try {
-    if (filePath) {
-      // Check if file exists
-      fs.accessSync(filePath, fs.constants.F_OK);
+  console.log('File Path:', filePath);  // Add this line to log the file path
 
+  try {
+    if (filePath && fs.existsSync(filePath)) {
       // Upload to Cloudinary
       const result = await cloudinary.uploader.upload(filePath);
       const imageUrl = result.secure_url;
@@ -220,11 +226,12 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
       `;
       await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
 
+      // Remove file from server after upload
       fs.unlinkSync(filePath);
 
       res.redirect('/homepage.html');
     } else {
-      res.status(400).send('No file uploaded');
+      res.status(400).send('File does not exist');
     }
   } catch (err) {
     console.error('Error creating event:', err);
