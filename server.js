@@ -14,21 +14,14 @@ const port = process.env.PORT || 3000;
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-      cb(null, 'public/uploads');
+    cb(null, 'public/uploads');
   },
   filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, Date.now() + path.extname(file.originalname));
   }
 });
 
 const upload = multer({ storage: storage });
-
-// Cloudinary
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY,  
-  api_secret: process.env.CLOUDINARY_API_SECRET  
-});
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -169,8 +162,9 @@ app.post('/login', async (req, res) => {
 });
 
 // Event creation route
-app.post('/create-event', upload.single('myfile'), async (req, res) => {
-  const { user, date, appt, location, message, category } = req.body;
+// app.post('/create-event', upload.single('myfile'), async (req, res) => {
+//   const { user, date, appt, location, message, category } = req.body;
+//   const filePath = req.file.path;
   // const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
 //   console.log('User:', user);
@@ -198,34 +192,44 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
 //       res.status(500).send('Error creating event');
 //   }
 // });
-try {
-  // Upload to Cloudinary
-  const result = await cloudinary.uploader.upload(req.file.path);
-  const imageUrl = result.secure_url;
+app.post('/create-event', upload.single('myfile'), async (req, res) => {
+  const { user, date, appt, location, message, category } = req.body;
+  const filePath = req.file ? req.file.path : null;
 
-  console.log('User:', user);
-  console.log('Image URL:', imageUrl);
+  try {
+    if (filePath) {
+      // Check if file exists
+      fs.accessSync(filePath, fs.constants.F_OK);
 
-  const userQuery = 'SELECT id FROM users WHERE username = $1';
-  const userResult = await client.query(userQuery, [user]);
+      // Upload to Cloudinary
+      const result = await cloudinary.uploader.upload(filePath);
+      const imageUrl = result.secure_url;
 
-  if (userResult.rows.length === 0) {
-      return res.status(400).send('Invalid username');
+      const userQuery = 'SELECT id FROM users WHERE username = $1';
+      const userResult = await client.query(userQuery, [user]);
+
+      if (userResult.rows.length === 0) {
+        return res.status(400).send('Invalid username');
+      }
+
+      const userId = userResult.rows[0].id;
+
+      const query = `
+          INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `;
+      await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+
+      fs.unlinkSync(filePath);
+
+      res.redirect('/homepage.html');
+    } else {
+      res.status(400).send('No file uploaded');
+    }
+  } catch (err) {
+    console.error('Error creating event:', err);
+    res.status(500).send('Error creating event');
   }
-
-  const userId = userResult.rows[0].id;
-
-  const query = `
-      INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-  `;
-  await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
-
-  res.redirect('/homepage.html');
-} catch (err) {
-  console.error('Error creating event:', err);
-  res.status(500).send('Error creating event');
-}
 });
 
 // Route to update an event (only if created by the logged-in user)
