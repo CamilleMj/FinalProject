@@ -228,8 +228,8 @@ app.delete('/events/:id', ensureAuthenticated, async (req, res) => {
 });
 
 // Start server
-// app.listen(port, () => {
-//   console.log(`Server running on http://localhost:${port}`);
-// });
+app.listen( () => {
+  console.log(`Server running`);
+});
 
 //http://localhost:3000/homepage.html
