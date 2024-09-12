@@ -3,8 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const client = require('./connect');
 const bcrypt = require('bcryptjs');
-const multer = require('multer')
+const multer = require('multer');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 
@@ -21,6 +22,13 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+// Cloudinary
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY,  
+  api_secret: process.env.CLOUDINARY_API_SECRET  
+});
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -162,38 +170,62 @@ app.post('/login', async (req, res) => {
 
 // Event creation route
 app.post('/create-event', upload.single('myfile'), async (req, res) => {
-  // const { user, date, appt, location, message, category } = req.body;
-  // const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
-  if (!req.file) {
-    return res.status(400).send('No file uploaded');
-  }
   const { user, date, appt, location, message, category } = req.body;
-  const imageUrl = `/uploads/${req.file.filename}`;
+  // const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+//   console.log('User:', user);
+//   console.log('Image URL:', imageUrl);
+
+//   try {
+//       const userQuery = 'SELECT id FROM users WHERE username = $1';
+//       const userResult = await client.query(userQuery, [user]);
+
+//       if (userResult.rows.length === 0) {
+//           return res.status(400).send('Invalid username');
+//       }
+
+//       const userId = userResult.rows[0].id;
+
+//       const query = `
+//           INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+//           VALUES ($1, $2, $3, $4, $5, $6, $7)
+//       `;
+//       await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+
+//       res.redirect('/homepage.html');
+//   } catch (err) {
+//       console.error('Error creating event:', err);
+//       res.status(500).send('Error creating event');
+//   }
+// });
+try {
+  // Upload to Cloudinary
+  const result = await cloudinary.uploader.upload(req.file.path);
+  const imageUrl = result.secure_url;
 
   console.log('User:', user);
   console.log('Image URL:', imageUrl);
 
-  try {
-      const userQuery = 'SELECT id FROM users WHERE username = $1';
-      const userResult = await client.query(userQuery, [user]);
+  const userQuery = 'SELECT id FROM users WHERE username = $1';
+  const userResult = await client.query(userQuery, [user]);
 
-      if (userResult.rows.length === 0) {
-          return res.status(400).send('Invalid username');
-      }
-
-      const userId = userResult.rows[0].id;
-
-      const query = `
-          INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-          VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `;
-      await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
-
-      res.redirect('/homepage.html');
-  } catch (err) {
-      console.error('Error creating event:', err);
-      res.status(500).send('Error creating event');
+  if (userResult.rows.length === 0) {
+      return res.status(400).send('Invalid username');
   }
+
+  const userId = userResult.rows[0].id;
+
+  const query = `
+      INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+  `;
+  await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+
+  res.redirect('/homepage.html');
+} catch (err) {
+  console.error('Error creating event:', err);
+  res.status(500).send('Error creating event');
+}
 });
 
 // Route to update an event (only if created by the logged-in user)
