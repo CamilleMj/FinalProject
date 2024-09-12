@@ -199,45 +199,49 @@ app.post('/login', async (req, res) => {
 //       res.status(500).send('Error creating event');
 //   }
 // });
+// Event creation route
 app.post('/create-event', upload.single('myfile'), async (req, res) => {
-  const { user, date, appt, location, message, category } = req.body;
-  const filePath = req.file ? req.file.path : null;
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
 
-  console.log('File Path:', filePath);  // Add this line to log the file path
+  const { user, date, appt, location, message, category } = req.body;
+  const filePath = req.file.path;
+
+  console.log('Uploaded File:', req.file);  // Log the uploaded file details
 
   try {
-    if (filePath && fs.existsSync(filePath)) {
-      // Upload to Cloudinary
-      const result = await cloudinary.uploader.upload(filePath);
-      const imageUrl = result.secure_url;
+    // Check if file exists
+    fs.accessSync(filePath, fs.constants.F_OK);
 
-      const userQuery = 'SELECT id FROM users WHERE username = $1';
-      const userResult = await client.query(userQuery, [user]);
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(filePath);
+    const imageUrl = result.secure_url;
 
-      if (userResult.rows.length === 0) {
-        return res.status(400).send('Invalid username');
-      }
+    // Check if user exists
+    const userQuery = 'SELECT id FROM users WHERE username = $1';
+    const userResult = await client.query(userQuery, [user]);
 
-      const userId = userResult.rows[0].id;
-
-      const query = `
-          INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-          VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `;
-      await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
-
-      // Remove file from server after upload
-      fs.unlinkSync(filePath);
-
-      res.redirect('/homepage.html');
-    } else {
-      res.status(400).send('File does not exist');
+    if (userResult.rows.length === 0) {
+      return res.status(400).send('Invalid username');
     }
+
+    const userId = userResult.rows[0].id;
+
+    // Insert event into the database
+    const query = `
+        INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `;
+    await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+
+    res.redirect('/homepage.html');
   } catch (err) {
     console.error('Error creating event:', err);
     res.status(500).send('Error creating event');
   }
 });
+
 
 // Route to update an event (only if created by the logged-in user)
 app.put('/events/:id', ensureAuthenticated, async (req, res) => {
