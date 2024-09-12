@@ -52,8 +52,8 @@ const client = new Client({
   port: process.env.PG_PORT,
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
-  database: process.env.PG_DATABASE,
-  ssl: { rejectUnauthorized: false } // Adjust based on your setup
+  database: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
 (async () => {
