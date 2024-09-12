@@ -7,7 +7,7 @@ const multer = require('multer');
 
 const app = express();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -228,6 +228,8 @@ app.delete('/events/:id', ensureAuthenticated, async (req, res) => {
 });
 
 // Start server
-app.listen(console.log(`Server running`));
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 //http://localhost:3000/homepage.html
