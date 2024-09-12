@@ -1,3 +1,4 @@
+// localhost
 // const { Client } = require('pg');
 // require('dotenv').config();
 
@@ -21,3 +22,25 @@
 // })();
 
 // module.exports = client;
+
+const { Client } = require('pg');
+require('dotenv').config();
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false 
+  }
+});
+
+(async () => {
+  try {
+    await client.connect();
+    const res = await client.query('SELECT $1::text as connected', ['Connection to postgres successful!']);
+    console.log(res.rows[0].connected);
+  } catch (err) {
+    console.error('Error connecting to the database:', err);
+  }
+})();
+
+module.exports = client;
