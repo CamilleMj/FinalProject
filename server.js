@@ -3,7 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const client = require('./connect');
 const bcrypt = require('bcryptjs');
-const multer = require('multer');
+const multer = require('multer')
+const fs = require('fs');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(express.json());
 // Serve static files
 app.use(express.static(__dirname));
 app.use(express.static('public'));
+app.use('/uploads', express.static('public/uploads'));
 
 // Serve HTML files
 app.get('/homepage.html', (req, res) => {
@@ -160,8 +162,13 @@ app.post('/login', async (req, res) => {
 
 // Event creation route
 app.post('/create-event', upload.single('myfile'), async (req, res) => {
+  // const { user, date, appt, location, message, category } = req.body;
+  // const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
   const { user, date, appt, location, message, category } = req.body;
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+  const imageUrl = `/uploads/${req.file.filename}`;
 
   console.log('User:', user);
   console.log('Image URL:', imageUrl);
