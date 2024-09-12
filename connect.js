@@ -53,15 +53,18 @@ const client = new Client({
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DATABASE,
-  ssl: { rejectUnauthorized: false },  // Use appropriate SSL settings if required
+  ssl: { rejectUnauthorized: false } // Adjust based on your setup
 });
 
 (async () => {
   try {
     await client.connect();
-    const res = await client.query('SELECT $1::text as connected', ['Connection to postgres successful!']);
-    console.log(res.rows[0].connected);
+    console.log('Connected to PostgreSQL');
   } catch (err) {
-    console.error('Error connecting to the database:', err);
+    console.error('Error connecting to PostgreSQL:', err);
   }
 })();
+
+console.log('Client object:', client);
+
+module.exports = client;
