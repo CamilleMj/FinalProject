@@ -5,7 +5,7 @@ const client = require('./connect');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
-const { cloudinary } = require('./cloudinaryConfig');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 
@@ -199,25 +199,22 @@ app.post('/login', async (req, res) => {
 //       res.status(500).send('Error creating event');
 //   }
 // });
-// Event creation route
-// Event creation route
 app.post('/create-event', upload.single('myfile'), async (req, res) => {
   try {
-    // Check if the file was uploaded
     if (!req.file) {
       return res.status(400).send('No file uploaded');
     }
 
-    console.log('Uploaded File:', req.file);  // This line is correct within this scope
+    console.log('Uploaded File:', req.file);
 
     const { user, date, appt, location, message, category } = req.body;
     const filePath = req.file.path;
 
-    // Upload the file to Cloudinary
+    // Upload file to Cloudinary
     const result = await cloudinary.uploader.upload(filePath);
     const imageUrl = result.secure_url;
 
-    // Query to check if user exists
+    // Check if the user exists in the database
     const userQuery = 'SELECT id FROM users WHERE username = $1';
     const userResult = await client.query(userQuery, [user]);
 
