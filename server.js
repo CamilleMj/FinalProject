@@ -194,37 +194,34 @@ app.post('/login', async (req, res) => {
 // });
 app.post('/create-event', upload.single('image'), async (req, res) => {
   try {
-    const { user, eventDate, eventTime, eventLocation, eventDescription, eventCategory } = req.body;
-    console.log('File:', req.file);
-    // Ensure Multer has successfully parsed the file
-    if (!req.file) {
-      throw new Error('No image file provided');
-    }
+      const { user, date, appt, location, message, category } = req.body;
 
-    // Upload image to Cloudinary
-    const uploadResult = await uploadImage(req.file.buffer); // Using file path (not buffer)
-    const imageUrl = uploadResult.secure_url;
+      if (!req.file) {
+          throw new Error('No image file provided');
+      }
 
-    // Retrieve user ID based on username
-    const userQuery = 'SELECT id FROM users WHERE username = $1';
-    const userResult = await client.query(userQuery, [user]);
+      const uploadResult = await uploadImage(req.file.buffer);
+      const imageUrl = uploadResult.secure_url;
 
-    if (userResult.rows.length === 0) {
-      return res.status(400).send('Invalid username');
-    }
+      const userQuery = 'SELECT id FROM users WHERE username = $1';
+      const userResult = await client.query(userQuery, [user]);
 
-    const userId = userResult.rows[0].id;
+      if (userResult.rows.length === 0) {
+          return res.status(400).send('Invalid username');
+      }
 
-    const query = `
-      INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `;
-    await client.query(query, [userId, eventDate, eventTime, eventLocation, eventDescription, eventCategory, imageUrl]);
+      const userId = userResult.rows[0].id;
 
-    res.redirect('/homepage.html');
+      const query = `
+          INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `;
+      await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+
+      res.redirect('/homepage.html');
   } catch (error) {
-    console.error('Error creating event:', error);
-    res.status(500).json(error);
+      console.error('Error creating event:', error);
+      res.status(500).send('Error creating event');
   }
 });
 
