@@ -20,8 +20,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   }
 });
-console.log('Uploaded File:', req.file);
-const upload = multer({ dest: 'public/uploads/' });
+const upload = multer({ dest: 'public/uploads/' }); 
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -204,17 +203,18 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
     if (!req.file) {
       return res.status(400).send('No file uploaded');
     }
-
+    
+    // Log the uploaded file details inside the route
     console.log('Uploaded File:', req.file);
 
     const { user, date, appt, location, message, category } = req.body;
     const filePath = req.file.path;
 
-    // Upload file to Cloudinary
+    // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(filePath);
     const imageUrl = result.secure_url;
 
-    // Check if the user exists in the database
+    // Query to check if user exists
     const userQuery = 'SELECT id FROM users WHERE username = $1';
     const userResult = await client.query(userQuery, [user]);
 
