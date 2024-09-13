@@ -1,5 +1,6 @@
-const { v2: cloudinary } = require('cloudinary');
-require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Configuration using environment variables
 cloudinary.config({
@@ -35,23 +36,26 @@ cloudinary.config({
 //   }
 
 // module.exports = { uploadImage };
-const uploadImage = async (buffer) => {
-  try {
-    // Upload the image from buffer
-    const result = await cloudinary.uploader.upload_stream(
-      { resource_type: 'auto' }, // 'auto' allows for automatic detection of file type
-      (error, result) => {
-        if (error) {
-          throw error;
-        }
-        return result;
-      }
-    ).end(buffer); // Send buffer to Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'events',
+        allowed_formats: ['jpg', 'png'],
+    },
+});
 
-    return result;
-  } catch (error) {
-    throw error;
-  }
+const upload = multer({ storage: storage });
+
+const uploadImage = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream({ folder: 'events' }, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        }).end(fileBuffer);
+    });
 };
 
 module.exports = { uploadImage };
