@@ -200,6 +200,7 @@ app.post('/login', async (req, res) => {
 //   }
 // });
 // Event creation route
+// Event creation route
 app.post('/create-event', upload.single('myfile'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded');
@@ -241,7 +242,6 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
     res.status(500).send('Error creating event');
   }
 });
-
 
 // Route to update an event (only if created by the logged-in user)
 app.put('/events/:id', ensureAuthenticated, async (req, res) => {
