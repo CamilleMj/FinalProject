@@ -211,6 +211,7 @@ app.post('/create-event', upload.single('image'), async (req, res) => {
 
     await client.query(query, values);
 
+    res.redirect('/homepage.html');
     res.status(200).send('Event created successfully!');
   } catch (error) {
     console.error('Error creating event:', error);
