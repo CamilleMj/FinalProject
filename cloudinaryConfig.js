@@ -9,6 +9,30 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'events',
+        allowed_formats: ['jpg', 'png'],
+    },
+});
+
+const upload = multer({ storage: storage });
+
+const uploadImage = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream({ folder: 'events' }, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        }).end(fileBuffer);
+    });
+};
+
+module.exports = { uploadImage };
+
 // Function to upload an image
 // async function uploadImage(imageBuffer) {
 //     try {
@@ -36,26 +60,3 @@ cloudinary.config({
 //   }
 
 // module.exports = { uploadImage };
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'events',
-        allowed_formats: ['jpg', 'png'],
-    },
-});
-
-const upload = multer({ storage: storage });
-
-const uploadImage = (fileBuffer) => {
-    return new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream({ folder: 'events' }, (error, result) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(result);
-            }
-        }).end(fileBuffer);
-    });
-};
-
-module.exports = { uploadImage };
