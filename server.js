@@ -194,7 +194,7 @@ app.post('/login', async (req, res) => {
 // });
 app.post('/create-event', upload.single('image'), async (req, res) => {
   try {
-    const { eventName, eventDate, eventLocation, eventDescription, eventCategory } = req.body;
+    const { user, eventDate, eventTime, eventLocation, eventDescription, eventCategory } = req.body;
     
     // Ensure Multer has successfully parsed the file
     if (!req.file) {
@@ -202,18 +202,26 @@ app.post('/create-event', upload.single('image'), async (req, res) => {
     }
 
     // Upload image to Cloudinary
-    const uploadResult = await uploadImage(req.file.buffer); // Send buffer to Cloudinary
+    const uploadResult = await uploadImage(req.file.path); // Using file path (not buffer)
     const imageUrl = uploadResult.secure_url;
 
-    // Now store the event details and the image URL in your database
+    // Retrieve user ID based on username
+    const userQuery = 'SELECT id FROM users WHERE username = $1';
+    const userResult = await client.query(userQuery, [user]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(400).send('Invalid username');
+    }
+
+    const userId = userResult.rows[0].id;
+
     const query = `
-          INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-          VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `;
-      await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+      INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `;
+    await client.query(query, [userId, eventDate, eventTime, eventLocation, eventDescription, eventCategory, imageUrl]);
 
     res.redirect('/homepage.html');
-    res.status(200).send('Event created successfully!');
   } catch (error) {
     console.error('Error creating event:', error);
     res.status(500).json(error);
