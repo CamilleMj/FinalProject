@@ -5,9 +5,8 @@ const client = require('./connect');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
-const cloudinary = require('cloudinary').v2;
+const { uploadImage } = require('./cloudinaryConfig');
 require('dotenv').config();
-import { uploadImage } from './cloudinaryConfig';
 
 const app = express();
 

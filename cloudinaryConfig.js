@@ -1,5 +1,5 @@
-import { v2 as cloudinary } from 'cloudinary';
-import 'dotenv/config';
+const { v2: cloudinary } = require('cloudinary');
+require('dotenv').config();
 
 // Configuration using environment variables
 cloudinary.config({
@@ -22,4 +22,4 @@ async function uploadImage(imagePath) {
   }
 }
 
-export { uploadImage };
+module.exports = { uploadImage };
