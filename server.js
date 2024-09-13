@@ -13,8 +13,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Configure multer for file uploads
-const storage = multer.memoryStorage(); // Store the files in memory only
-const upload = multer({ storage });
+const storage = multer.memoryStorage(); // Storing in memory instead of the disk
+const upload = multer({ storage: storage });
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -192,42 +192,29 @@ app.post('/login', async (req, res) => {
 //       res.status(500).send('Error creating event');
 //   }
 // });
-app.post('/create-event', upload.single('myfile'), async (req, res) => {
+app.post('/create-event', upload.single('image'), async (req, res) => {
   try {
+    const { eventName, eventDate, eventLocation, eventDescription, eventCategory } = req.body;
+    
+    // Ensure Multer has successfully parsed the file
     if (!req.file) {
-      return res.status(400).send('No file uploaded');
+      throw new Error('No image file provided');
     }
-    const imagePath = req.file.path;
-    const uploadResult = await uploadImage(imagePath);
+
+    // Upload image to Cloudinary
+    const uploadResult = await uploadImage(req.file.buffer); // Send buffer to Cloudinary
     const imageUrl = uploadResult.secure_url;
 
-    // Log the uploaded file details inside the route
-    console.log('Uploaded File:', req.file);
+    // Now store the event details and the image URL in your database
+    const query = 'INSERT INTO events (name, date, location, description, category, image_url) VALUES ($1, $2, $3, $4, $5, $6)';
+    const values = [eventName, eventDate, eventLocation, eventDescription, eventCategory, imageUrl];
 
-    const { user, date, appt, location, message, category } = req.body;
-    const filePath = req.file.path;
+    await client.query(query, values);
 
-    // Query to check if user exists
-    const userQuery = 'SELECT id FROM users WHERE username = $1';
-    const userResult = await client.query(userQuery, [user]);
-
-    if (userResult.rows.length === 0) {
-      return res.status(400).send('Invalid username');
-    }
-
-    const userId = userResult.rows[0].id;
-
-    // Insert event into the database
-    const insertEventQuery = `
-      INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `;
-    await client.query(insertEventQuery, [userId, date, appt, location, message, category, imageUrl]);
-
-    res.redirect('/homepage.html');
-  } catch (err) {
-    console.error('Error creating event:', err);
-    res.status(500).send('Error creating event');
+    res.status(200).send('Event created successfully!');
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json(error);
   }
 });
 
