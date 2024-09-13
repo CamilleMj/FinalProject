@@ -206,10 +206,11 @@ app.post('/create-event', upload.single('image'), async (req, res) => {
     const imageUrl = uploadResult.secure_url;
 
     // Now store the event details and the image URL in your database
-    const query = 'INSERT INTO events (name, date, location, description, category, image_url) VALUES ($1, $2, $3, $4, $5, $6)';
-    const values = [eventName, eventDate, eventLocation, eventDescription, eventCategory, imageUrl];
-
-    await client.query(query, values);
+    const query = `
+          INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `;
+      await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
 
     res.redirect('/homepage.html');
     res.status(200).send('Event created successfully!');
