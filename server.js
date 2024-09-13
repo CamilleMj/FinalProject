@@ -5,7 +5,7 @@ const client = require('./connect');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
-const cloudinary = require('cloudinary').v2;
+const { cloudinary } = require('./cloudinaryConfig');
 
 const app = express();
 
@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
   }
 });
 console.log('Uploaded File:', req.file);
-const upload = multer({ storage: storage });
+const upload = multer({ dest: 'public/uploads/' });
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -202,24 +202,22 @@ app.post('/login', async (req, res) => {
 // Event creation route
 // Event creation route
 app.post('/create-event', upload.single('myfile'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No file uploaded');
-  }
-
-  const { user, date, appt, location, message, category } = req.body;
-  const filePath = req.file.path;
-
-  console.log('Uploaded File:', req.file);  // Log the uploaded file details
-
   try {
-    // Check if file exists
-    fs.accessSync(filePath, fs.constants.F_OK);
+    // Check if the file was uploaded
+    if (!req.file) {
+      return res.status(400).send('No file uploaded');
+    }
 
-    // Upload to Cloudinary
+    console.log('Uploaded File:', req.file);  // This line is correct within this scope
+
+    const { user, date, appt, location, message, category } = req.body;
+    const filePath = req.file.path;
+
+    // Upload the file to Cloudinary
     const result = await cloudinary.uploader.upload(filePath);
     const imageUrl = result.secure_url;
 
-    // Check if user exists
+    // Query to check if user exists
     const userQuery = 'SELECT id FROM users WHERE username = $1';
     const userResult = await client.query(userQuery, [user]);
 
@@ -230,11 +228,11 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
     const userId = userResult.rows[0].id;
 
     // Insert event into the database
-    const query = `
-        INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+    const insertEventQuery = `
+      INSERT INTO events (user_id, event_date, event_time, location, description, category, image_url)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
-    await client.query(query, [userId, date, appt, location, message, category, imageUrl]);
+    await client.query(insertEventQuery, [userId, date, appt, location, message, category, imageUrl]);
 
     res.redirect('/homepage.html');
   } catch (err) {
