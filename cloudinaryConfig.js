@@ -9,29 +9,41 @@ cloudinary.config({
 });
 
 // Function to upload an image
-async function uploadImage(imageBuffer) {
+// async function uploadImage(imageBuffer) {
+//     try {
+//       const uploadResult = await cloudinary.uploader.upload_stream({
+//         folder: 'event_images',
+//         public_id: 'event_image',
+//       }, (error, result) => {
+//         if (error) {
+//           throw error;
+//         }
+//         return result;
+//       });
+  
+//       // Pipe the image buffer to the upload stream
+//       const stream = require('stream');
+//       const bufferStream = new stream.PassThrough();
+//       bufferStream.end(imageBuffer);
+//       bufferStream.pipe(uploadResult);
+  
+//       return uploadResult;
+//     } catch (error) {
+//       console.error('Error uploading to Cloudinary:', error);
+//       throw error;
+//     }
+//   }
+
+// module.exports = { uploadImage };
+const uploadImage = async (file) => {
     try {
-      const uploadResult = await cloudinary.uploader.upload_stream({
-        folder: 'event_images',
-        public_id: 'event_image',
-      }, (error, result) => {
-        if (error) {
-          throw error;
-        }
-        return result;
+      const result = await cloudinary.uploader.upload(file, {
+        upload_preset: 'your_upload_preset' // If you're using a preset
       });
-  
-      // Pipe the image buffer to the upload stream
-      const stream = require('stream');
-      const bufferStream = new stream.PassThrough();
-      bufferStream.end(imageBuffer);
-      bufferStream.pipe(uploadResult);
-  
-      return uploadResult;
+      return result;
     } catch (error) {
-      console.error('Error uploading to Cloudinary:', error);
       throw error;
     }
-  }
-
-module.exports = { uploadImage };
+  };
+  
+  module.exports = { uploadImage };

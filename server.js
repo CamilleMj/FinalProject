@@ -195,7 +195,7 @@ app.post('/login', async (req, res) => {
 app.post('/create-event', upload.single('image'), async (req, res) => {
   try {
     const { user, eventDate, eventTime, eventLocation, eventDescription, eventCategory } = req.body;
-    
+    console.log('File:', req.file);
     // Ensure Multer has successfully parsed the file
     if (!req.file) {
       throw new Error('No image file provided');
