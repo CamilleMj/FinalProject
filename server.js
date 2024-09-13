@@ -202,7 +202,7 @@ app.post('/create-event', upload.single('image'), async (req, res) => {
     }
 
     // Upload image to Cloudinary
-    const uploadResult = await uploadImage(req.file.path); // Using file path (not buffer)
+    const uploadResult = await uploadImage(req.file.buffer); // Using file path (not buffer)
     const imageUrl = uploadResult.secure_url;
 
     // Retrieve user ID based on username

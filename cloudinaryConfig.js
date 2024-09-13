@@ -35,15 +35,23 @@ cloudinary.config({
 //   }
 
 // module.exports = { uploadImage };
-const uploadImage = async (file) => {
-    try {
-      const result = await cloudinary.uploader.upload(file, {
-        upload_preset: 'your_upload_preset' // If you're using a preset
-      });
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  };
-  
-  module.exports = { uploadImage };
+const uploadImage = async (buffer) => {
+  try {
+    // Upload the image from buffer
+    const result = await cloudinary.uploader.upload_stream(
+      { resource_type: 'auto' }, // 'auto' allows for automatic detection of file type
+      (error, result) => {
+        if (error) {
+          throw error;
+        }
+        return result;
+      }
+    ).end(buffer); // Send buffer to Cloudinary
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = { uploadImage };
