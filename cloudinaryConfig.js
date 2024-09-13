@@ -1,10 +1,25 @@
-const cloudinary = require('cloudinary').v2;
+import { v2 as cloudinary } from 'cloudinary';
+import 'dotenv/config';
 
-// Configure Cloudinary with your credentials
+// Configuration using environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-module.exports = { cloudinary };
+// Function to upload an image
+async function uploadImage(imagePath) {
+  try {
+    const uploadResult = await cloudinary.uploader.upload(imagePath, {
+      folder: 'event_images',
+      public_id: 'event_image',
+    });
+    return uploadResult;
+  } catch (error) {
+    console.error('Error uploading to Cloudinary:', error);
+    throw error;
+  }
+}
+
+export { uploadImage };

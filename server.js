@@ -6,21 +6,16 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
+import { uploadImage } from './cloudinaryConfig';
 
 const app = express();
 
 const port = process.env.PORT || 3000;
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-const upload = multer({ dest: 'public/uploads/' }); 
+const storage = multer.memoryStorage(); // Store the files in memory only
+const upload = multer({ storage });
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -203,16 +198,15 @@ app.post('/create-event', upload.single('myfile'), async (req, res) => {
     if (!req.file) {
       return res.status(400).send('No file uploaded');
     }
-    
+    const imagePath = req.file.path;
+    const uploadResult = await uploadImage(imagePath);
+    const imageUrl = uploadResult.secure_url;
+
     // Log the uploaded file details inside the route
     console.log('Uploaded File:', req.file);
 
     const { user, date, appt, location, message, category } = req.body;
     const filePath = req.file.path;
-
-    // Upload to Cloudinary
-    const result = await cloudinary.uploader.upload(filePath);
-    const imageUrl = result.secure_url;
 
     // Query to check if user exists
     const userQuery = 'SELECT id FROM users WHERE username = $1';
